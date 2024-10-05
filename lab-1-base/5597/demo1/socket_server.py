@@ -15,6 +15,8 @@ print(address, ' connected...')
 while True:
     client_data = conn.recv(1024).decode()
     if client_data == "exit":
+        print("Communication end.")
+        break
         exit('communication end.')
     print('the client from %s sends msg ：%s' % (address, client_data))
 
