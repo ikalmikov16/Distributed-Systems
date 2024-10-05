@@ -34,12 +34,12 @@ Value (String): String with full chat history between clients including sender i
 chat_history = {}
 
 
-def link_handler(client_socket, client_address, client_id):
+def link_handler(client_socket, client_id):
     # Add client id and socket to active_clients
     active_clients[client_id] = client_socket
     client_socket.sendall(f'Your ID is {client_id}'.encode())
 
-    print(f'Server starting to receiving msg from {client_id}')
+    print(f'Server starting to recieve messages from {client_id}')
 
     while True:
         message = client_socket.recv(1024).decode()
@@ -94,6 +94,7 @@ def link_handler(client_socket, client_address, client_id):
                 else:
                     key = f'{recipient_id}:{client_id}'
 
+                # Store message in chat history
                 chat_history[key] = chat_history.get(key, '') + message
 
                 # Forward message to client
@@ -107,7 +108,7 @@ def link_handler(client_socket, client_address, client_id):
         client_socket.sendall('Server received your message'.encode())
     client_socket.close()
 
-# Create socker server
+# Create socket server
 ip_port = ('127.0.0.1', 9999)
 sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # socket.SOCK_STREAM is tcp
 
@@ -120,5 +121,5 @@ while True:
     client_id = str(uuid.uuid4())
     print(f'Creating new connection with {client_id}')
     
-    thread = threading.Thread(target=link_handler, args=(client_socket, client_address, client_id))
+    thread = threading.Thread(target=link_handler, args=(client_socket, client_id))
     thread.start()
