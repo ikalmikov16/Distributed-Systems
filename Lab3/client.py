@@ -6,10 +6,12 @@ coordinator_address = ('127.0.0.1', 5001)
 sk.connect(coordinator_address)
 
 # Transfer 100 A to B
-message = "Transfer 100 A to B".encode()
+# request = "Transfer 100 A to B"
 # Add 20% of A to A and B
-# message = "Add 20% of A to A and B".encode()
+request = "Add 20% of A to A and B"
 
-sk.sendall(message)
+sk.sendall(request.encode())
+print(f"Request sent: {request}")
+
 coordinator_response = sk.recv(1024).decode()
 print(coordinator_response)
