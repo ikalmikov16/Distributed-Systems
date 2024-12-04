@@ -240,7 +240,7 @@ class Participant:
 
 
 # Start coordinator
-coordinator_address = ('127.0.0.1', 5001)
+coordinator_address = ('10.128.0.2', 5001)
 coordinator = Coordinator(coordinator_address)
 Thread(target=coordinator.start_server, args=()).start()
 
