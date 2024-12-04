@@ -6,9 +6,9 @@ coordinator_address = ('127.0.0.1', 5001)
 sk.connect(coordinator_address)
 
 # Transfer 100 A to B
-# request = "Transfer 100 A to B"
+request = "Transfer 100 A to B"
 # Add 20% of A to A and B
-request = "Add 20% of A to A and B"
+# request = "Add 20% of A to A and B"
 
 sk.sendall(request.encode())
 print(f"Request sent: {request}")
