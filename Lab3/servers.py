@@ -172,9 +172,9 @@ class Participant:
             if request.startswith("Prepare"):
                 # Uncomment to
                 # Simulate Crash before sending response ###########################################################
-                # if self.id == "B":
-                #     time.sleep(3)
-                #     continue
+                if self.id == "B":
+                    time.sleep(3)
+                    continue
                 #####################################################################################################
 
                 print(f"Node {self.id}: {request}")

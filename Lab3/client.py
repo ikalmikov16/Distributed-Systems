@@ -10,7 +10,7 @@ sk.connect(coordinator_address)
 request = "Transfer 100 A to B"
 
 # Add 20% of A to A and B ########################
-request = "Add 20% of A to A and B"
+# request = "Add 20% of A to A and B"
 
 sk.sendall(request.encode())
 print(f"Request sent: {request}")
