@@ -1,8 +1,8 @@
 import socket
 
 sk = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# coordinator_address = ('10.128.0.2', 5001)
-coordinator_address = ('127.0.0.1', 5001)
+coordinator_address = ('10.128.0.2', 5001)
+# coordinator_address = ('127.0.0.1', 5001)
 
 sk.connect(coordinator_address)
 
