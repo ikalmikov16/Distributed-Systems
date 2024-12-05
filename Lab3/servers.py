@@ -21,6 +21,7 @@ class Coordinator:
         socket_a, _ = sk.accept()
         socket_b, _ = sk.accept()
 
+        # Set sockets timeout to 3 seconds
         socket_a.settimeout(3)
         socket_b.settimeout(3)
 
@@ -40,14 +41,12 @@ class Coordinator:
             value_a = int(file.readline())
         with open('Bank_B.txt', 'r') as file:
             value_b = int(file.readline())
-        
-        self.values["A"] = value_a
-        self.values["B"] = value_b
 
-        print(f"Bank A: {self.values['A']}")
-        print(f"Bank B: {self.values['B']}")
+        print(f"Bank A: {value_a}")
+        print(f"Bank B: {value_b}")
     
     def handle_client(self):
+        # Handle Client requests
         while True:
             client_socket, _ = self.socket.accept()
             message = client_socket.recv(1024).decode()
@@ -68,7 +67,6 @@ class Coordinator:
             client_socket.close()
 
     def transfer(self):
-        # Get sockets, set timeout to 1 second
         socket_a = self.participants["A"]
         socket_b = self.participants["B"]
 
@@ -102,16 +100,12 @@ class Coordinator:
         return "Success"
 
     def add_twenty_percent(self):
-        # Get sockets, set timeout to 1 second
         socket_a = self.participants["A"]
         socket_b = self.participants["B"]
-
-        # Get 20% of A
-        add_value = int(self.values["A"] * 0.2)
         
         # Send prepare messages until successful commit
-        socket_a.sendall(f"Prepare +{add_value}".encode())
-        socket_b.sendall(f"Prepare +{add_value}".encode())
+        socket_a.sendall(f"Prepare +20% of A".encode())
+        socket_b.sendall(f"Prepare +20% of A".encode())
 
         responses = []
         responses.append(self.receive_response(socket_a))
@@ -123,6 +117,9 @@ class Coordinator:
             socket_b.sendall("Abort".encode())
 
             return "Aborted"
+        
+        # Get 20% of A from response
+        add_value = int(int(responses[0][7:]) * 0.2)
         
         # Send commit messages
         response = ""
@@ -139,8 +136,10 @@ class Coordinator:
         return "Success"
     
     def receive_response(self, sk):
+        # Recieve response from participant
+        # If socket times out, return Abort
         try:
-            return sk.recv(1024).decode()  # Attempt to receive and decode data
+            return sk.recv(1024).decode()
         except socket.timeout:
             print("Socket timed out!!")
             return "Abort"
@@ -179,19 +178,23 @@ class Participant:
                 #####################################################################################################
 
                 print(f"Node {self.id}: {request}")
+
                 response = self.prepare(request)
+
                 print(f"Node {self.id}: Vote {response}")
             elif request.startswith("Commit"):
                 # Uncomment to
-                # Simulate Crash before sending response ###########################################################
-                if self.id == "B" and self.crash > 0:
-                    self.crash -= 1
-                    time.sleep(3.5)
-                    continue
+                # Simulate Crash after sending response ###########################################################
+                # if self.id == "B" and self.crash > 0:
+                #     self.crash -= 1
+                #     time.sleep(3.5)
+                #     continue
                 #####################################################################################################
 
                 print(f"Node {self.id}: {request}")
+
                 response = self.commit(request)
+
                 print(f"Node {self.id}: {response}")
             else:
                 print(f"Node {self.id}: {response}")
@@ -203,11 +206,11 @@ class Participant:
 
         # Validate Request
         if request[8] == "+":
-            response = "Commit"
+            response = f"Commit {self.value}"
         elif request[8] == "-":
             value = int(request[9:])
             if self.value >= value:
-                response = "Commit"
+                response = f"Commit {self.value}"
 
         # Respond to Coordinator
         return response
@@ -240,7 +243,8 @@ class Participant:
 
 
 # Start coordinator
-coordinator_address = ('10.128.0.2', 5001)
+# coordinator_address = ('10.128.0.2', 5001)
+coordinator_address = ('127.0.0.1', 5001)
 coordinator = Coordinator(coordinator_address)
 Thread(target=coordinator.start_server, args=()).start()
 
